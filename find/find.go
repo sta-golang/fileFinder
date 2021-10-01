@@ -39,7 +39,11 @@ func Do(rootDir string) error {
 func do(ag *asyncgroup.Group, infos []fs.FileInfo, parentDir string) {
 	for _, info := range infos {
 		filename := parentDir + "/" + info.Name()
-		if index := strings.Index(filename, conf.KEYWORD); index != -1 {
+		tempFilename := filename
+		if conf.IgnoreCase {
+			tempFilename = strings.ToLower(filename)
+		}
+		if index := strings.Index(tempFilename, conf.KEYWORD); index != -1 {
 			out.Put(result.New(filename))
 		}
 		if info.IsDir() {

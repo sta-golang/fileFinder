@@ -38,7 +38,11 @@ func Search(keyword string) {
 func search(arr []*result.Result) {
 	for _, res := range arr {
 		filename := res.DirPath + res.FileName
-		if index := strings.Index(filename, conf.KEYWORD); index != -1 {
+		tempFilename := filename
+		if conf.IgnoreCase {
+			tempFilename = strings.ToLower(filename)
+		}
+		if index := strings.Index(tempFilename, conf.KEYWORD); index != -1 {
 			out.Put(result.New(filename))
 		}
 	}

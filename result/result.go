@@ -121,7 +121,3 @@ func (r *Result) Size() string {
 	}
 	return fmt.Sprintf("\033[1;38m%.2f %-5s\033[0m", float64(r.FileSize)/float64(unit), unitStr)
 }
-
-func Print(res *Result) {
-
-}
