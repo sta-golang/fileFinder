@@ -36,6 +36,7 @@ func main() {
 		log.Warn("Unable to start lookup ! ")
 		return
 	}
+	find.Init()
 	log.Infof("find keyword : \033[3;34m%s\033[0m IgnoreCase : \033[3;34m%v\033[0m from path : \033[3;34m%s\033[0m",
 		conf.KEYWORD, conf.IgnoreCase, rootDir)
 	timing := tm.FuncTiming(func() {

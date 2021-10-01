@@ -14,7 +14,6 @@ var NoColor bool
 
 func init() {
 	NoColor = (runtime.GOOS == "windows")
-	GNum = (runtime.NumCPU() << 1) + 1
 }
 
 const (

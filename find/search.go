@@ -21,7 +21,7 @@ func Search(keyword string) {
 		search(arr)
 		return
 	}
-	ag := asyncgroup.New(asyncgroup.WithTaskSize(conf.GNum))
+	ag := asyncgroup.New(asyncgroup.WithTaskSize(conf.GNum), asyncgroup.WithWorkPool(wp))
 	defer ag.Shutdown()
 	for i := 0; i*limit < len(arr); i++ {
 		start := i * limit

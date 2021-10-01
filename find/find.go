@@ -13,7 +13,6 @@ import (
 	"github.com/sta-golang/filefinder/result"
 	"github.com/sta-golang/go-lib-utils/async/asyncgroup"
 	"github.com/sta-golang/go-lib-utils/log"
-	"github.com/sta-golang/go-lib-utils/pool/workerpool"
 	"github.com/sta-golang/go-lib-utils/str"
 )
 
@@ -23,8 +22,6 @@ func Do(rootDir string) error {
 		log.Error(err)
 		return err
 	}
-	wp := workerpool.NewWithQueueSize(conf.GNum, 8192<<4)
-	defer wp.Stop()
 	ag := asyncgroup.New(asyncgroup.WithConcurrentSecurity(),
 		asyncgroup.WithTaskSize(8192), asyncgroup.WithWorkPool(wp))
 	defer ag.Shutdown()
@@ -59,6 +56,11 @@ func do(ag *asyncgroup.Group, infos []fs.FileInfo, parentDir string) {
 				return nil, nil
 			}); err != nil {
 				log.Error(err)
+				time.Sleep(time.Millisecond * 100)
+				_ = ag.Add(getID(), func() (interface{}, error) {
+					do(ag, dirInfos, currentFilename)
+					return nil, nil
+				})
 			}
 			continue
 		}
