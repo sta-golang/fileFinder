@@ -24,7 +24,15 @@ go build
 ```shell
 ./fileFinder vi /user/bin false
 ```
+<br />
+如果在linux 或者 mac下想把结果输出到文件里:
 
+可以使用--color参数 例如
+
+```shell
+
+./fileFinder --color vi /user/bin > temp
+```
 
 ## 作者信息
 毕业于XUPT 软件科技协会实验室成员

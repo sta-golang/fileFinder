@@ -4,19 +4,12 @@ import (
 	"bytes"
 	"fmt"
 	"os"
-	"runtime"
 	"strings"
 	"time"
 
 	"github.com/sta-golang/filefinder/conf"
 	tm "github.com/sta-golang/go-lib-utils/time"
 )
-
-var NoColor bool
-
-func init() {
-	NoColor = (runtime.GOOS == "windows")
-}
 
 type Result struct {
 	IsDir          bool
@@ -59,7 +52,7 @@ var New = func(filename string) *Result {
 func (r *Result) String() string {
 	var logFormat = "%-120s\t%-4s\t%-20s\t%s"
 	filename := r.FileDirPath()
-	if !NoColor {
+	if !conf.NoColor {
 		textFmt := "\033[38m%s\033[0m"
 		if r.IsDir {
 			textFmt = "\033[35m%s\033[0m"
@@ -83,6 +76,12 @@ func (r *Result) FileDirPath() string {
 }
 
 func (r *Result) FileType() string {
+	if conf.NoColor {
+		if r.IsDir {
+			return "Dir"
+		}
+		return "File"
+	}
 	if r.IsDir {
 		return "\033[1;38mDir\033[0m"
 	}
@@ -90,6 +89,9 @@ func (r *Result) FileType() string {
 }
 
 func (r *Result) ModTime() string {
+	if conf.NoColor {
+		return tm.ParseDataTimeToStr(r.FileChangeTime)
+	}
 	return fmt.Sprintf("\033[36m%s\033[0m", tm.ParseDataTimeToStr(r.FileChangeTime))
 }
 
@@ -117,7 +119,13 @@ func (r *Result) Size() string {
 		temp := r.FileSize / 1000
 		size = float64(temp) / float64(unit)
 		size *= 1000
+		if conf.NoColor {
+			return fmt.Sprintf("%.2f %-10s", size, unitStr)
+		}
 		return fmt.Sprintf("\033[1;38m%.2f %-10s\033[0m", size, unitStr)
+	}
+	if conf.NoColor {
+		return fmt.Sprintf("%.2f %-5s", float64(r.FileSize)/float64(unit), unitStr)
 	}
 	return fmt.Sprintf("\033[1;38m%.2f %-5s\033[0m", float64(r.FileSize)/float64(unit), unitStr)
 }

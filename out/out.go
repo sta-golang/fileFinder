@@ -16,7 +16,7 @@ type outResult struct {
 
 var outFmt = "%s %d %v"
 
-func init() {
+func Init() {
 	if !conf.NoColor {
 		outFmt = "\033[1;36m%s %d\033[0m %v"
 	}

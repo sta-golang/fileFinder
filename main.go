@@ -14,13 +14,9 @@ import (
 )
 
 var help = flag.Bool("help", false, "请求帮助")
+var noColor = flag.Bool("color", false, "没有color")
 
 func init() {
-	home := os.Getenv("HOME")
-	conf.InitConfig(home + "/.config/filefinder/conf.yaml")
-}
-
-func main() {
 	flag.Parse()
 	if *help {
 		fmt.Print("Maybe you can look at the following example ：")
@@ -30,7 +26,21 @@ func main() {
 		fmt.Println("\t3. ==> true is third args (not must!) This is keyword ignore case default true:")
 		return
 	}
-	args := os.Args[utils.MinInt(1, len(os.Args)):]
+	if *noColor {
+		conf.NoColor = true
+	}
+	home := os.Getenv("HOME")
+	conf.InitConfig(home + "/.config/filefinder/conf.yaml")
+	out.Init()
+}
+
+func main() {
+	startIndex := 1
+	if *noColor {
+		conf.NoColor = true
+		startIndex = 2
+	}
+	args := os.Args[utils.MinInt(startIndex, len(os.Args)):]
 	rootDir, start := parseArgs(args)
 	if !start {
 		log.Warn("Unable to start lookup ! ")
