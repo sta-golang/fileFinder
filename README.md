@@ -33,6 +33,8 @@ go build
 
 ./fileFinder --color vi /user/bin > temp
 ```
+特别提醒内置的 conf文件在 ～/。config/filefinder/conf.yaml目录下 可以copy代码仓库的conf.yaml
+当然可以修改main.go设置conf文件 不添加conf文件也可以 但是最好还是添加一下
 
 ## 作者信息
 毕业于XUPT 软件科技协会实验室成员
