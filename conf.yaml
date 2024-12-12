@@ -1,0 +1,7 @@
+worker:
+  gnum: 64
+  ch_size: 102400
+log:
+  file_log:
+    file_dir: /tmp/file_finder_log
+    file_name: finder
