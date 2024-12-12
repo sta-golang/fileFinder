@@ -33,18 +33,18 @@ var New = func(filename string) *Result {
 		ret.DirPath = filename[:index]
 	}
 	index := -1
-	lastIndex := -len(conf.KEYWORD)
+	lastIndex := -len(conf.GetKeyword())
 	if conf.IgnoreCase {
 		filename = strings.ToLower(filename)
 	}
 	for {
-		index = strings.Index(filename, conf.KEYWORD)
+		index = strings.Index(filename, conf.GetKeyword())
 		if index == -1 {
 			break
 		}
-		filename = filename[index+len(conf.KEYWORD):]
-		ret.KeywordIndex = append(ret.KeywordIndex, index+lastIndex+len(conf.KEYWORD))
-		lastIndex = lastIndex + index + len(conf.KEYWORD)
+		filename = filename[index+len(conf.GetKeyword()):]
+		ret.KeywordIndex = append(ret.KeywordIndex, index+lastIndex+len(conf.GetKeyword()))
+		lastIndex = lastIndex + index + len(conf.GetKeyword())
 	}
 	return ret
 }
@@ -62,8 +62,8 @@ func (r *Result) String() string {
 		lastIndex := 0
 		for _, index := range r.KeywordIndex {
 			buff.WriteString(fmt.Sprintf(textFmt,
-				filename[lastIndex:index]) + fmt.Sprintf(keywordFmt, filename[index:index+len(conf.KEYWORD)]))
-			lastIndex = index + len(conf.KEYWORD)
+				filename[lastIndex:index]) + fmt.Sprintf(keywordFmt, filename[index:index+len(conf.GetKeyword())]))
+			lastIndex = index + len(conf.GetKeyword())
 		}
 		buff.WriteString(fmt.Sprintf(textFmt, filename[lastIndex:]))
 		filename = buff.String()
