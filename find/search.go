@@ -11,11 +11,7 @@ import (
 	"github.com/sta-golang/go-lib-utils/async/asyncgroup"
 )
 
-func Search(keyword string) {
-	conf.HistoryKeyword = append(conf.HistoryKeyword, keyword)
-	conf.KEYWORD = keyword
-	out.InitStep()
-	arr := out.GetAllResult()
+func Search(arr []*result.Result, keyword string) {
 	limit := len(arr) / conf.GNum
 	if limit == 0 {
 		search(arr)
@@ -32,7 +28,6 @@ func Search(keyword string) {
 		})
 	}
 	ag.Wait()
-	conf.Step += 1
 }
 
 func search(arr []*result.Result) {
@@ -42,7 +37,7 @@ func search(arr []*result.Result) {
 		if conf.IgnoreCase {
 			tempFilename = strings.ToLower(filename)
 		}
-		if index := strings.Index(tempFilename, conf.KEYWORD); index != -1 {
+		if index := strings.Index(tempFilename, conf.GetKeyword()); index != -1 {
 			out.Put(result.New(filename))
 		}
 	}
