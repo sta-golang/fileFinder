@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/fs"
 	"io/ioutil"
+	"os"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -40,13 +41,17 @@ func do(ag *asyncgroup.Group, infos []fs.FileInfo, parentDir string) {
 		if conf.IgnoreCase {
 			tempFilename = strings.ToLower(filename)
 		}
-		if index := strings.Index(tempFilename, conf.KEYWORD); index != -1 {
+		if index := strings.Index(tempFilename, conf.GetKeyword()); index != -1 {
 			out.Put(result.New(filename))
 		}
 		if info.IsDir() {
 			atomic.AddInt32(&conf.FindDirTotal, 1)
 			dirInfos, err := ioutil.ReadDir(filename)
 			if err != nil {
+				if err != os.ErrPermission {
+					log.Warn(err)
+					continue
+				}
 				log.Error(err)
 				continue
 			}
