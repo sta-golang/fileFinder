@@ -6,13 +6,17 @@ import (
 
 	"github.com/sta-golang/filefinder/conf"
 	"github.com/sta-golang/filefinder/result"
+	"github.com/sta-golang/go-lib-utils/algorithm/data_structure"
 )
 
 type outResult struct {
 	buff []*result.Result
 	mu   sync.Mutex
-	cnt  int
 }
+
+var globalOuts *data_structure.Stack
+var currentOuts *outResult
+var baseOuts *outResult
 
 var outFmt = "%s %d %v"
 
@@ -20,37 +24,46 @@ func Init() {
 	if !conf.NoColor {
 		outFmt = "\033[1;36m%s %d\033[0m %v"
 	}
+	baseOuts = &outResult{
+		buff: make([]*result.Result, 0, 8192),
+		mu:   sync.Mutex{},
+	}
+	globalOuts = data_structure.NewStack()
+	globalOuts.Push(baseOuts)
+	currentOuts = baseOuts
+}
+
+func AddOuts() {
+	peek := globalOuts.Peek().(*outResult)
+	globalOuts.Push(&outResult{
+		buff: make([]*result.Result, 0, len(peek.buff)),
+		mu:   sync.Mutex{},
+	})
+	currentOuts = globalOuts.Peek().(*outResult)
+}
+
+func Pop() {
+	if currentOuts == baseOuts {
+		return
+	}
+	_ = globalOuts.Pop()
+	currentOuts = globalOuts.Peek().(*outResult)
 }
 
 var baseOut = &outResult{
 	buff: make([]*result.Result, 0, 8192),
 	mu:   sync.Mutex{},
-	cnt:  1,
-}
-
-var stepOut = []*outResult{
-	baseOut,
 }
 
 func Put(res *result.Result) {
-	put(res, stepOut[conf.Step])
-}
-
-func InitStep() {
-	for conf.Step >= len(stepOut) {
-		stepOut = append(stepOut, &outResult{
-			buff: make([]*result.Result, 0, len(stepOut[len(stepOut)-1].buff)),
-			cnt:  1,
-			mu:   sync.Mutex{},
-		})
-	}
+	put(res, currentOuts)
 }
 
 func PutWithStep(res *result.Result) {
 }
 
 func OutResult() {
-	putBatch(stepOut[conf.Step-1].buff)
+	putBatch(currentOuts.buff)
 }
 
 func putBatch(arr []*result.Result) {
@@ -60,25 +73,23 @@ func putBatch(arr []*result.Result) {
 }
 
 func Get(index int) *result.Result {
-	if index < 1 || index > len(stepOut[conf.Step-1].buff) {
+	if index < 1 || index > ResultSize() {
 		return nil
 	}
-	return stepOut[conf.Step-1].buff[index-1]
+	return currentOuts.buff[index-1]
 }
 
 func ResultSize() int {
-	return len(stepOut[conf.Step-1].buff)
+	return len(currentOuts.buff)
 }
 
 func GetAllResult() []*result.Result {
-	return stepOut[conf.Step-1].buff
+	return currentOuts.buff
 }
 
 func put(res *result.Result, o *outResult) {
 	o.mu.Lock()
 	defer o.mu.Unlock()
-	fmt.Println(fmt.Sprintf(outFmt, conf.GloabalConfig().LoggerConf.Prefix, o.cnt, res))
+	fmt.Println(fmt.Sprintf(outFmt, conf.GloabalConfig().LoggerConf.Prefix, len(o.buff)+1, res))
 	o.buff = append(o.buff, res)
-	o.cnt++
-
 }
