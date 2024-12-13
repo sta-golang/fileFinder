@@ -30,7 +30,6 @@ func init() {
 }
 
 func (k *keywordInfo) Add(keyword string) {
-	fmt.Println("key word : ", keyword)
 	if k.index >= cap(k.history) {
 		newArr := make([]string, len(k.history)*2)
 		for i := 0; i < len(k.history); i++ {
