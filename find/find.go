@@ -48,6 +48,7 @@ func do(ag *asyncgroup.Group, infos []fs.FileInfo, parentDir string) {
 			atomic.AddInt32(&conf.FindDirTotal, 1)
 			dirInfos, err := ioutil.ReadDir(filename)
 			if err != nil {
+				atomic.AddInt32(&conf.ErrDirTotal, 1)
 				if err != os.ErrPermission {
 					log.Warn(err)
 					continue
