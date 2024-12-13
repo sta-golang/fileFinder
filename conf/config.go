@@ -9,8 +9,9 @@ import (
 )
 
 type Config struct {
-	WorkerConf WorkerpoolConfig `yaml:"worker"`
-	LoggerConf LogConfig        `yaml:"log"`
+	WorkerConf  WorkerpoolConfig `yaml:"worker"`
+	LoggerConf  LogConfig        `yaml:"log"`
+	NotShowWarn bool             `yaml:"not_show_warn"`
 }
 
 type WorkerpoolConfig struct {
