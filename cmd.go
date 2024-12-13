@@ -105,6 +105,9 @@ func doInteractive() bool {
 }
 
 func showErrDirInfo() {
+	if conf.GloabalConfig().NotShowWarn {
+		return
+	}
 	msgFmt := "%s %s"
 	if !conf.NoColor {
 		msgFmt = "%s \033[1;2;38m%s\033[0m"
@@ -126,6 +129,7 @@ func showErrDirInfo() {
 }
 
 func interactive() {
+	showErrDirInfo()
 	for {
 		if !doInteractive() {
 			break
