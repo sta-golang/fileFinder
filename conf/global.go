@@ -16,6 +16,7 @@ var globalKeywordInfo keywordInfo
 var IgnoreCase = true
 var FindDirTotal = int32(0)
 var FindFileTotal = int32(0)
+var ErrDirTotal = int32(0)
 var GNum = 32
 
 var NoColor bool
