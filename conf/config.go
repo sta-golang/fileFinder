@@ -25,8 +25,9 @@ func GloabalConfig() *Config {
 }
 
 type LogConfig struct {
-	Prefix string `yaml:"prefix"`
-	Level  int    `yaml:"Level"`
+	Prefix      string             `yaml:"prefix"`
+	Level       int                `yaml:"Level"`
+	FileLogConf *log.FileLogConfig `yaml:"file_log"`
 }
 
 var defaultConfig = func() Config {
@@ -77,6 +78,11 @@ func initWorker(config *Config) {
 }
 
 func initLog(config Config) {
+	if config.LoggerConf.FileLogConf != nil {
+		logger := log.NewFileLog(config.LoggerConf.FileLogConf)
+		log.SetGlobalLogger(logger)
+		return
+	}
 	if config.LoggerConf.Level < int(log.DEBUG) {
 		config.LoggerConf.Level = int(log.DEBUG)
 	}
