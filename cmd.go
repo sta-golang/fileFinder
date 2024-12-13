@@ -11,6 +11,7 @@ import (
 	"github.com/sta-golang/go-lib-utils/cmd"
 	"github.com/sta-golang/go-lib-utils/log"
 	"github.com/sta-golang/go-lib-utils/str"
+	"github.com/sta-golang/go-lib-utils/time"
 )
 
 func parseArgs(args []string) (string, bool) {
@@ -101,6 +102,27 @@ func doInteractive() bool {
 		}
 	}
 	return true
+}
+
+func showErrDirInfo() {
+	msgFmt := "%s %s"
+	if !conf.NoColor {
+		msgFmt = "%s \033[1;2;38m%s\033[0m"
+	}
+	fileLogMsg := ""
+	if conf.GloabalConfig().LoggerConf.FileLogConf != nil {
+		time.GetNowDateStr()
+		logName := "sta"
+		if conf.GloabalConfig().LoggerConf.FileLogConf.FileName != "" {
+			logName = conf.GloabalConfig().LoggerConf.FileLogConf.FileName
+		}
+		fileLogMsg = fmt.Sprintf("detail please view :  %s/%s.log.%s.*", conf.GloabalConfig().LoggerConf.FileLogConf.FileDir, logName, time.GetNowDateStr())
+	}
+	if conf.ErrDirTotal > 0 {
+		warnMsg := fmt.Sprintf(msgFmt, conf.GloabalConfig().LoggerConf.Prefix,
+			fmt.Sprintf(" ==> You has %d search Dir err %s", conf.ErrDirTotal, fileLogMsg))
+		fmt.Println(warnMsg)
+	}
 }
 
 func interactive() {
